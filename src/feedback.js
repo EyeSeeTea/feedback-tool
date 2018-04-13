@@ -18,7 +18,7 @@ let EventHandler = utility .EventHandler;
             postURL: true,
             proxy: undefined,
             letterRendering: false,
-            initButtonText: 'Send feedback',
+            initButtonText: 'Send Feedback',
             strokeStyle: 'black',
             shadowColor: 'black',
             shadowOffsetX: 1,
@@ -441,13 +441,13 @@ let EventHandler = utility .EventHandler;
                     $('#feedback-welcome').show();
                 });
 
-                $(document).on('mousedown', '.feedback-sethighlight', function () {
+                $(document).on('click', '.feedback-sethighlight', function () {
                     highlight = 1;
                     $(this).addClass('feedback-active');
                     $('.feedback-setblackout').removeClass('feedback-active');
                 });
 
-                $(document).on('mousedown', '.feedback-setblackout', function () {
+                $(document).on('click', '.feedback-setblackout', function () {
                     highlight = 0;
                     $(this).addClass('feedback-active');
                     $('.feedback-sethighlight').removeClass('feedback-active');
