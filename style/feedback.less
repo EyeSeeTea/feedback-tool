@@ -21,7 +21,7 @@
   padding: 4px;
 }
 #feedback-note-tmp:focus,
-#feedback-overview-note:focus {  border: 1px solid #64b7cc }
+#feedback-note:focus {  border: 1px solid #64b7cc }
 #feedback-canvas {
   position: absolute;
   top: 0;
@@ -168,7 +168,7 @@
   color: #fff;
 }
 #feedback-note-tmp,
-#feedback-overview-note {  resize: none }
+#feedback-note {  resize: none }
 #feedback-welcome,
 #feedback-highlighter,
 #feedback-overview,
@@ -262,9 +262,15 @@
   font-size: 15px;
   margin: 8px 0;
 }
+
+#feedback-title {
+  width: 314px;
+  padding: 0px 10px;
+}
+
 .feedback-additional {  margin-bottom: 20px!important }
 #feedback-overview-description {  float: left }
-#feedback-overview-note {
+#feedback-note {
   width: 314px;
   padding: 10px;
   height: 150px;
@@ -292,4 +298,12 @@
 #feedback-additional-none {
   margin-top: 16px;
   display: none;
+}
+
+.feedback-spinner {
+  position: relative;
+  z-index: 10000000;
+  background: url(spinner.gif);
+  width: 32px;
+  height: 32px;
 }

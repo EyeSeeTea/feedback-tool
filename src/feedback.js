@@ -5,11 +5,41 @@
 
 let html2canvas = require('html2canvas/dist/html2canvas');
 let utility = require('./utility');
+var format = require("string-template");
 let EventHandler = utility .EventHandler;
+var defaultI18nProperties = require('../i18n/en.properties');
 
 (function ($) {
+    var templates = {
+        highlighter: require('../templates/highlighter.html'),
+        overview: require('../templates/overview.html'),
+        submitSuccess: require('../templates/submitSuccess.html'),
+        submitError: require('../templates/submitError.html')
+    };
+
+    var parseI18nProperties = function(i18nProperties) {
+        return i18nProperties
+            .split(/\r?\n/)
+            .filter(line => line && !line.startsWith("#"))
+            .map(line => line.split("="))
+            .map(fields => [fields[0], fields.slice(1).join("=")])
+            .reduce((acc, [key, value]) => { acc[key] = value; return acc; }, {});
+    };
+
+    var renderTemplate = function(template, namespace) {
+        return format(template, namespace);
+    }
+
+    var showSpinner = function() {
+        $("body").prepend($("<div />", {class: "feedback-spinner"}));
+    };
+
+    var hideSpinner = function() {
+        $(".feedback-spinner").remove();
+    };
 
     $.feedback = function (options) {
+        var i18n = parseI18nProperties(options.i18nProperties || defaultI18nProperties);
 
         var settings = $.extend({
             ajaxURL: '',
@@ -18,7 +48,7 @@ let EventHandler = utility .EventHandler;
             postURL: true,
             proxy: undefined,
             letterRendering: false,
-            initButtonText: 'Send Feedback',
+            initButtonText: i18n.send_feedback,
             strokeStyle: 'black',
             shadowColor: 'black',
             shadowOffsetX: 1,
@@ -27,22 +57,19 @@ let EventHandler = utility .EventHandler;
             lineJoin: 'bevel',
             lineWidth: 3,
             feedbackButton: '.feedback-btn',
-            showDescriptionModal: true,
             isDraggable: true,
             onScreenshotTaken: function () {
             },
             tpl: {
-                description: require('../templates/description.html'),
-                highlighter: require('../templates/highlighter.html'),
-                overview: require('../templates/overview.html'),
-                submitSuccess: require('../templates/submitSuccess.html'),
-                submitError: require('../templates/submitError.html')
+                highlighter: renderTemplate(templates.highlighter, i18n),
+                overview: renderTemplate(templates.overview, i18n),
+                submitSuccess: renderTemplate(templates.submitSuccess, i18n),
+                submitError: renderTemplate(templates.submitError, i18n)
             },
             onClose: function () {
             },
             screenshotStroke: true,
             highlightElement: true,
-            initialBox: false
         }, options);
         var supportedBrowser = !!window.HTMLCanvasElement;
         var isFeedbackButtonNative = settings.feedbackButton == '.feedback-btn';
@@ -62,10 +89,6 @@ let EventHandler = utility .EventHandler;
                     h = $(document).height(),
                     w = $(document).width(),
                     tpl = '<div id="feedback-module">';
-
-                if (settings.initialBox) {
-                    tpl += settings.tpl.description;
-                }
 
                 tpl +=  settings.tpl.highlighter + settings.tpl.overview + '<canvas id="feedback-canvas"></canvas><div id="feedback-helpers"></div><input id="feedback-note" name="feedback-note" type="hidden"></div>';
 
@@ -87,14 +110,12 @@ let EventHandler = utility .EventHandler;
                 $('#feedback-module').css(moduleStyle);
                 $('#feedback-canvas').attr(canvasAttr).css('z-index', '30000');
 
-                if (!settings.initialBox) {
-                    $('#feedback-highlighter-back').remove();
-                    canDraw = true;
-                    $('#feedback-canvas').css('cursor', 'crosshair');
-                    $('#feedback-helpers').show();
-                    $('#feedback-welcome').hide();
-                    $('#feedback-highlighter').show();
-                }
+                $('#feedback-highlighter-back').remove();
+                canDraw = true;
+                $('#feedback-canvas').css('cursor', 'crosshair');
+                $('#feedback-helpers').show();
+                $('#feedback-welcome').hide();
+                $('#feedback-highlighter').show();
 
                 if (settings.isDraggable) {
                     let feedback_highlighter_move_handler = null;
@@ -460,11 +481,13 @@ let EventHandler = utility .EventHandler;
                         dh = $(window).height();
                     $('#feedback-helpers').hide();
                     $('#feedback-highlighter').hide();
+                    showSpinner();
                     if (!settings.screenshotStroke) {
                         redraw(ctx, false);
                     }
                     html2canvas($('body'), {
                         onrendered: function (canvas) {
+                            hideSpinner();
                             if (!settings.screenshotStroke) {
                                 redraw(ctx);
                             }
@@ -475,26 +498,17 @@ let EventHandler = utility .EventHandler;
                             $(document).scrollTop(sy);
                             post.img = img;
                             settings.onScreenshotTaken(post.img);
-                            if (settings.showDescriptionModal) {
-                                $('#feedback-canvas-tmp').remove();
-                                $('#feedback-overview').show();
-                                if (!utility.isMobile) {
-                                    $('#feedback-overview').toggleClass('feedback-desktop', true);
-                                    $('#feedback-overview').toggleClass('feedback-mobile', false);
-                                } else {
-                                    $('#feedback-overview').toggleClass('feedback-desktop', false);
-                                    $('#feedback-overview').toggleClass('feedback-mobile', true);
-                                }
-                                $('#feedback-overview-description-text>textarea').remove();
-                                $('#feedback-overview-screenshot>img').remove();
-                                $('<textarea id="feedback-overview-note">' + $('#feedback-note').val() + '</textarea>').insertAfter('#feedback-overview-description-text h3:eq(0)');
-                                $('#feedback-overview-screenshot').append('<img class="feedback-screenshot" src="' + img + '" />');
+                            $('#feedback-canvas-tmp').remove();
+                            $('#feedback-overview').show();
+                            if (!utility.isMobile) {
+                                $('#feedback-overview').toggleClass('feedback-desktop', true);
+                                $('#feedback-overview').toggleClass('feedback-mobile', false);
+                            } else {
+                                $('#feedback-overview').toggleClass('feedback-desktop', false);
+                                $('#feedback-overview').toggleClass('feedback-mobile', true);
                             }
-                            else {
-                                $('#feedback-module').remove();
-                                close();
-                                _canvas.remove();
-                            }
+                            $('#feedback-overview-screenshot>img').remove();
+                            $('#feedback-overview-screenshot').append('<img class="feedback-screenshot" src="' + img + '" />');
                         },
                         proxy: settings.proxy,
                         letterRendering: settings.letterRendering
@@ -510,37 +524,30 @@ let EventHandler = utility .EventHandler;
                     $('#feedback-overview-error').hide();
                 });
 
-                $(document).on('keyup', '#feedback-note-tmp,#feedback-overview-note', function (e) {
-                    var tx;
-                    if (e.target.id === 'feedback-note-tmp')
-                        tx = $('#feedback-note-tmp').val();
-                    else {
-                        tx = $('#feedback-overview-note').val();
-                        $('#feedback-note-tmp').val(tx);
-                    }
-
-                    $('#feedback-note').val(tx);
-                });
-
                 $(document).on('click', '#feedback-submit', function () {
                     canDraw = false;
 
-                    if ($('#feedback-note').val().length > 0) {
+                    if ($('#feedback-title').val().length > 0 && $('#feedback-note').val().length > 0) {
                         $('#feedback-submit-success,#feedback-submit-error').remove();
                         $('#feedback-overview').hide();
 
                         post.img = img;
+                        post.title = $('#feedback-title').val();
                         post.note = $('#feedback-note').val();
                         var data = {feedback: JSON.stringify(post)};
-                        $.ajax({
+                        showSpinner();
+                        (settings.postFunction || $.ajax)({
                             url: settings.ajaxURL,
                             dataType: 'json',
                             type: 'POST',
                             data: data,
+                            post: post,
                             success: function () {
+                                hideSpinner();
                                 $('#feedback-module').append(settings.tpl.submitSuccess);
                             },
                             error: function () {
+                                hideSpinner();
                                 $('#feedback-module').append(settings.tpl.submitError);
                             }
                         });
