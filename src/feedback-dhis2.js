@@ -27,7 +27,8 @@ class FeedBackToolDhis2 {
             feedbackOptions: {i18nProperties},
         }));
     };
-    fetch(`includes/feedback-tool/i18n/${locale}.properties`)
+
+    fetch(`includes/feedback-tool/i18n/${locale}.properties`, {credentials: 'same-origin'})
         .then(res => res.status.toString().match(/^2..$/) ? res : throwError("Cannot find locale"))
         .then(res => res.text())
         .then(init).catch(() => init());
