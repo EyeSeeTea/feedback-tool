@@ -4,7 +4,8 @@
   "description": "Website feedback tool.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "gulp js css i18n"
   },
   "repository": {
     "type": "git",
@@ -29,6 +30,7 @@
   },
   "dependencies": {
     "html2canvas": "^0.5.0-beta4",
+    "string-template": "^1.0.0",
     "stringify": "^5.0.0"
   }
 }

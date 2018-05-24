@@ -5,10 +5,13 @@
   font-size: 14px;
   position: fixed;
   bottom: -3px;
-  right: 60px;
+  right: 200px;
   width: auto;
 }
-#feedback-module p {  font-size: 13px }
+#feedback-module p {
+  font-size: 13px;
+  margin-bottom: 25px;
+}
 #feedback-note-tmp {
   width: 444px;
   height: auto;
@@ -18,7 +21,7 @@
   padding: 4px;
 }
 #feedback-note-tmp:focus,
-#feedback-overview-note:focus {  border: 1px solid #64b7cc }
+#feedback-note:focus {  border: 1px solid #64b7cc }
 #feedback-canvas {
   position: absolute;
   top: 0;
@@ -32,13 +35,11 @@
   position: fixed;
 }
 .feedback-logo {
-  background: url(icons.png) -0px -0px no-repeat;
   width: 34px;
   margin-bottom: 16px;
-  font-size: 16px;
-  font-weight: normal;
+  font-size: 22px;
+  font-weight: bold;
   line-height: 32px;
-  padding-left: 40px;
   height: 32px;
 }
 .feedback-next-btn {
@@ -147,16 +148,14 @@
   font-family: @button-font;
   border: 1px solid #dcdcdc;
   border: 1px solid rgba(0,0,0,0.1);
-  color: #444;
+  color: white;
   .border-radius(2px);
-  background-color: #f5f5f5;
-  .gradient(#f5f5f5,#f1f1f1);
+  background-color: rgb(255, 152, 0);
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 .feedback-btn-gray:hover {
-  color: #333;
-  border: 1px solid #c6c6c6;
-  background-color: #f8f8f8;
-  .gradient(#f8f8f8,#f1f1f1);
+  border: 2px solid rgb(255,152,0);
 }
 .feedback-btn-blue {
   text-align: center;
@@ -169,7 +168,7 @@
   color: #fff;
 }
 #feedback-note-tmp,
-#feedback-overview-note {  resize: none }
+#feedback-note {  resize: none }
 #feedback-welcome,
 #feedback-highlighter,
 #feedback-overview,
@@ -263,14 +262,21 @@
   font-size: 15px;
   margin: 8px 0;
 }
+
+#feedback-title {
+  width: 314px;
+  padding: 0px 10px;
+}
+
 .feedback-additional {  margin-bottom: 20px!important }
 #feedback-overview-description {  float: left }
-#feedback-overview-note {
+#feedback-note {
   width: 314px;
-  padding: 4px;
-  height: 90px;
+  padding: 10px;
+  height: 150px;
   outline: none;
   font-family: @primary-font;
+  line-height: 20px;
 }
 #feedback-overview-screenshot {  float: right }
 .feedback-screenshot {
@@ -292,4 +298,12 @@
 #feedback-additional-none {
   margin-top: 16px;
   display: none;
+}
+
+.feedback-spinner {
+  position: relative;
+  z-index: 10000000;
+  background: url(spinner.gif);
+  width: 32px;
+  height: 32px;
 }
