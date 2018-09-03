@@ -25,6 +25,7 @@ class FeedBackToolDhis2 {
         $.feedbackGithub(Object.assign({}, this.options, {
             postFunction: this.sendFeedbackToUserGroups.bind(this),
             feedbackOptions: {i18nProperties},
+            username: this.d2.currentUser.username,
         }));
     };
 
@@ -36,6 +37,9 @@ class FeedBackToolDhis2 {
 
   sendFeedbackToUserGroups(payload) {
       const userGroupNames = this.options.sendToDhis2UserGroups;
+      if (userGroupNames.length === 0)
+        return Promise.resolve();
+
       const {title, body} = payload;
       const currentApp = this.d2.system.installedApps.find(app => app.key === this.appKey);
       const fullTitle = currentApp ? `[${currentApp.name}] ${title}` : title;
