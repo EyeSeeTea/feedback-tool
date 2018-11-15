@@ -15,12 +15,13 @@ class FeedBackToolDhis2 {
   constructor(d2, appKey, options) {
     this.d2 = d2;
     this.appKey = appKey;
-    this.options = options;
+    this.options = options || {};
   }
   
   init() {
     const locale = this.d2.currentUser.userSettings.settings.keyUiLocale || "en";
     const throwError = (msg) => { throw new Error(msg); };
+    const i18nPath = this.options.i18nPath || "includes/feedback-tool/i18n"
     const init = i18nProperties => {
         $.feedbackGithub(Object.assign({}, this.options, {
             postFunction: this.sendFeedbackToUserGroups.bind(this),
@@ -29,7 +30,7 @@ class FeedBackToolDhis2 {
         }));
     };
 
-    fetch(`includes/feedback-tool/i18n/${locale}.properties`, {credentials: 'same-origin'})
+    fetch(`${i18nPath}/${locale}.properties`, {credentials: 'same-origin'})
         .then(res => res.status.toString().match(/^2..$/) ? res : throwError("Cannot find locale"))
         .then(res => res.text())
         .then(init).catch(() => init());
