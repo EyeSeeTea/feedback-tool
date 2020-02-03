@@ -25,7 +25,7 @@ class FeedBackToolDhis2 {
     const init = i18nProperties => {
         $.feedbackGithub(Object.assign({}, this.options, {
             postFunction: this.sendFeedbackToUserGroups.bind(this),
-            feedbackOptions: {i18nProperties},
+            feedbackOptions: Object.assign({}, { i18nProperties }, this.options.feedbackOptions),
             username: this.d2.currentUser.username,
         }));
     };

@@ -48,6 +48,7 @@ var defaultI18nProperties = require('../i18n/en.properties');
             postURL: true,
             proxy: undefined,
             letterRendering: false,
+            descriptionTemplate: '',
             initButtonText: i18n.send_feedback,
             strokeStyle: 'black',
             shadowColor: 'black',
@@ -485,6 +486,7 @@ var defaultI18nProperties = require('../i18n/en.properties');
                     if (!settings.screenshotStroke) {
                         redraw(ctx, false);
                     }
+                    $("#feedback-note").val(settings.descriptionTemplate);
                     html2canvas($('body').get(0)).then(
                         function (canvas) {
                             hideSpinner();
