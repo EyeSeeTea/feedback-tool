@@ -485,8 +485,8 @@ var defaultI18nProperties = require('../i18n/en.properties');
                     if (!settings.screenshotStroke) {
                         redraw(ctx, false);
                     }
-                    html2canvas($('body'), {
-                        onrendered: function (canvas) {
+                    html2canvas($('body').get(0)).then(
+                        function (canvas) {
                             hideSpinner();
                             if (!settings.screenshotStroke) {
                                 redraw(ctx);
@@ -509,10 +509,8 @@ var defaultI18nProperties = require('../i18n/en.properties');
                             }
                             $('#feedback-overview-screenshot>img').remove();
                             $('#feedback-overview-screenshot').append('<img class="feedback-screenshot" src="' + img + '" />');
-                        },
-                        proxy: settings.proxy,
-                        letterRendering: settings.letterRendering
-                    });
+                        }
+                    );
                 });
 
                 $(document).on('click', '#feedback-overview-back', function (e) {
