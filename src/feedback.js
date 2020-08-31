@@ -82,6 +82,10 @@ var defaultI18nProperties = require('../i18n/en.properties');
                 $('body').append('<button class="feedback-btn feedback-btn-gray">' + settings.initButtonText + '</button>');
             }
             $(document).on('click', settings.feedbackButton, function () {
+                // FIXME: Feedback tool does not properly work when a modal with tabIndex is set
+                // Work-around: Remove tabIndex attribute for all items
+                $("div[tabindex='-1']").removeAttr("tabindex");
+
                 if (isFeedbackButtonNative) {
                     $(this).hide();
                 }
