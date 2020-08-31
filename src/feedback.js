@@ -491,7 +491,9 @@ var defaultI18nProperties = require('../i18n/en.properties');
                         redraw(ctx, false);
                     }
                     $("#feedback-note").val(settings.descriptionTemplate);
-                    html2canvas($('body').get(0)).then(
+                    const el = $("body").get(0);
+                    const options = { scale: 1 };
+                    html2canvas(el, options).then(
                         function (canvas) {
                             hideSpinner();
                             if (!settings.screenshotStroke) {
