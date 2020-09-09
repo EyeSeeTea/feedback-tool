@@ -29,6 +29,11 @@ Init plugin:
 
 Pretty much it should be working on any browser with `canvas` support. Browsers with no canvas support won't display the feedback button.
 
+## Build
+
+$ npm install
+$ npm run build # creates files in dist/
+
 ## Demo
 
 [http://ivoviz.github.io/feedback/](http://ivoviz.github.io/feedback/) - Click "Send feedback" at the bottom right of the page.

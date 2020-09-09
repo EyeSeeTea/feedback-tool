@@ -30,21 +30,26 @@ gulp.task('css', function () {
         .pipe(gulp.dest('./dist'));
 
     // Copy images in styles directory that the stylesheets will probably need.
-    gulp.src('./style/*.{ttf,woff,eof,svg,png,jpg,jpeg}')
+    gulp.src('./style/*.{ttf,woff,eof,svg,png,jpg,jpeg,gif}')
         .pipe(gulp.dest('./dist'));
 });
 
 // JS section.
 gulp.task('js', function() {
-    gulp.src('./src/feedback.js')
+    gulp.src('./src/feedback*.js')
         .pipe(browserify({
-            transform: stringify({ extensions: ['.html'], minify: true })
+            transform: stringify({ extensions: ['.html', '.properties'], minify: true })
         }))
         .pipe(babel())
         .pipe(gulp.dest('./dist'))
         .pipe(uglify())
         .pipe(rename({suffix: '.min'}))
         .pipe(gulp.dest('./dist'));
+});
+
+gulp.task('i18n', function() {
+    gulp.src('./i18n/*')
+        .pipe(gulp.dest('./dist/i18n/'));
 });
 
 // Watcher section.
@@ -54,4 +59,4 @@ gulp.task('watchers', function () {
     gulp.watch(paths.templates, ['js']);
 });
 
-gulp.task('default', ['css', 'js', 'watchers']);
+gulp.task('default', ['css', 'js', 'i18n', 'watchers']);
